@@ -30,3 +30,30 @@ body {
   transform: translate(-50%, -50%);
   opacity: 0.6;
 }
+
+.texture-selector {
+  color: white;
+  border: 2px solid rgb(95, 95, 95);
+  background-color: rgb(206, 206, 206);
+
+  padding: 4px;
+  position: absolute;
+  bottom: 1%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 4px;
+}
+.texture-selector.hidden {
+  display: none;
+}
+
+.texture-selector img {
+  width: 40px;
+  border: 2px solid rgb(95, 95, 95);
+  image-rendering: pixelated;
+}
+
+.texture-selector img.selected {
+  border: 2px solid rgb(204, 53, 66);
+}

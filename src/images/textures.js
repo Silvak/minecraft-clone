@@ -7,6 +7,7 @@ const dirtTexture = new TextureLoader().load(dirtImg);
 const stoneTexture = new TextureLoader().load(stoneImg);
 const oakTexture = new TextureLoader().load(oakImg);
 const glassTexture = new TextureLoader().load(glassImg);
+const grassTexture = new TextureLoader().load(grassImg);
 
 const textures = [
   groundTexture,
@@ -14,6 +15,7 @@ const textures = [
   stoneTexture,
   oakTexture,
   glassTexture,
+  grassTexture,
 ];
 
 textures.forEach((texture) => {
@@ -22,4 +24,11 @@ textures.forEach((texture) => {
   texture.magFilter = NearestFilter;
 });
 
-export { groundTexture, dirtTexture, stoneTexture, oakTexture, glassTexture };
+export {
+  groundTexture,
+  dirtTexture,
+  stoneTexture,
+  oakTexture,
+  glassTexture,
+  grassTexture,
+};

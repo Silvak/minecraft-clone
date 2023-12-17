@@ -7,11 +7,11 @@ const ACTIONS_KEYBOARD_MAP = {
   KeyD: "moveRight",
   Space: "jump",
   // block selection
-  Digit1: "oak",
-  Digit2: "grass",
-  Digit3: "dirt",
-  Digit4: "stone",
-  Digit5: "glass",
+  Digit4: "oak",
+  Digit1: "grass",
+  Digit2: "dirt",
+  Digit5: "stone",
+  Digit3: "glass",
 };
 
 export const useKeyboard = () => {
