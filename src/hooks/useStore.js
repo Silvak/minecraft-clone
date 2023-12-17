@@ -17,12 +17,9 @@ export const useStore = create((set) => ({
     }));
   },
 
-  removeCube: (x, y, z) => {
+  removeCube: (id) => {
     set((state) => ({
-      cubes: state.cubes.filter((cube) => {
-        const [X, Y, Z] = cube.pos;
-        return X != x || Y != y || Z != Z;
-      }),
+      cubes: state.cubes.filter((cube) => cube.id != id),
     }));
   },
 

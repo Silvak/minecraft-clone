@@ -28,8 +28,7 @@ export const Cube = ({ id, position, texture }) => {
       onClick={(e) => {
         e.stopPropagation();
         if (e.altKey) {
-          const [x, y, z] = ref.current.position;
-          removeCube(x, y, z);
+          removeCube(id);
         }
       }}
     >
