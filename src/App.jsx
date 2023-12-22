@@ -6,10 +6,31 @@ import { FPV } from "./components/FPV";
 import { Player } from "./components/Player";
 import { Cubes } from "./components/Cubes";
 import { TextureSelector } from "./components/TextureSelect";
+import { Terrain } from "./components/Terrain";
 
 function App() {
   return (
     <>
+      <Canvas>
+        <Sky sunPosition={[100, 100, 20]} />
+        <ambientLight intensity={1.3} />
+        <FPV />
+        <Physics>
+          <Terrain />
+
+          <Ground />
+          <Player />
+        </Physics>
+      </Canvas>
+    </>
+  );
+}
+
+export default App;
+
+/*
+
+<>
       <Canvas>
         <Sky sunPosition={[100, 100, 20]} />
         <ambientLight intensity={1.3} />
@@ -23,8 +44,4 @@ function App() {
 
       <TextureSelector />
       <div className="pointer">+</div>
-    </>
-  );
-}
-
-export default App;
+    </>*/
