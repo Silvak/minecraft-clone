@@ -1,32 +1,18 @@
-export const useVoxel = (cellSize) => {
-  const matrix = [];
-  for (let y = 0; y < cellSize; y++) {
-    for (let z = 0; z < cellSize; z++) {
-      for (let x = 0; x < cellSize; x++) {
-        matrix.push([y, z, x]); // Puedes ajustar las posiciones según tus necesidades
-      }
-    }
-  }
-  return matrix; // [[i, j, 0], [i, j, 0], ...]
-};
-
 import * as THREE from "three";
 
-class VoxelWorld {
-  constructor(cellSize) {
-    this.cellSize = cellSize;
-    this.cellSliceSize = cellSize * cellSize;
-    this.cell = new Uint8Array(cellSize * cellSize * cellSize);
-  }
-  computeVoxelOffset(x, y, z) {
-    const { cellSize, cellSliceSize } = this;
+export const useChunk = () => {
+  const cellSize = 32;
+  const cellSliceSize = cellSize * cellSize;
+  const cell = new Uint8Array(cellSize * cellSize * cellSize);
+
+  const computeVoxelOffset = (x, y, z) => {
     const voxelX = THREE.MathUtils.euclideanModulo(x, cellSize) | 0;
     const voxelY = THREE.MathUtils.euclideanModulo(y, cellSize) | 0;
     const voxelZ = THREE.MathUtils.euclideanModulo(z, cellSize) | 0;
     return voxelY * cellSliceSize + voxelZ * cellSize + voxelX;
-  }
-  getCellForVoxel(x, y, z) {
-    const { cellSize } = this;
+  };
+
+  const getCellForVoxel = (x, y, z) => {
     const cellX = Math.floor(x / cellSize);
     const cellY = Math.floor(y / cellSize);
     const cellZ = Math.floor(z / cellSize);
@@ -34,28 +20,29 @@ class VoxelWorld {
       return null;
     }
 
-    return this.cell;
-  }
-  setVoxel(x, y, z, v) {
-    const cell = this.getCellForVoxel(x, y, z);
+    return cell;
+  };
+
+  const setVoxel = (x, y, z, v) => {
+    const cell = getCellForVoxel(x, y, z);
     if (!cell) {
       return; // TODO: add a new cell?
     }
-
-    const voxelOffset = this.computeVoxelOffset(x, y, z);
+    const voxelOffset = computeVoxelOffset(x, y, z);
     cell[voxelOffset] = v;
-  }
-  getVoxel(x, y, z) {
-    const cell = this.getCellForVoxel(x, y, z);
+  };
+
+  const getVoxel = (x, y, z) => {
+    const cell = getCellForVoxel(x, y, z);
     if (!cell) {
       return 0;
     }
 
-    const voxelOffset = this.computeVoxelOffset(x, y, z);
+    const voxelOffset = computeVoxelOffset(x, y, z);
     return cell[voxelOffset];
-  }
-  generateGeometryDataForCell(cellX, cellY, cellZ) {
-    const { cellSize } = this;
+  };
+
+  const generateGeometryDataForCell = (cellX, cellY, cellZ) => {
     const positions = [];
     const normals = [];
     const indices = [];
@@ -69,11 +56,11 @@ class VoxelWorld {
         const voxelZ = startZ + z;
         for (let x = 0; x < cellSize; ++x) {
           const voxelX = startX + x;
-          const voxel = this.getVoxel(voxelX, voxelY, voxelZ);
+          const voxel = getVoxel(voxelX, voxelY, voxelZ);
           if (voxel) {
             // There is a voxel here but do we need faces for it?
-            for (const { dir, corners } of VoxelWorld.faces) {
-              const neighbor = this.getVoxel(
+            for (const { dir, corners } of faces) {
+              const neighbor = getVoxel(
                 voxelX + dir[0],
                 voxelY + dir[1],
                 voxelZ + dir[2]
@@ -99,10 +86,25 @@ class VoxelWorld {
       normals,
       indices,
     };
-  }
-}
+  };
 
-VoxelWorld.faces = [
+  const newChunk = () => {
+    for (let y = 0; y < cellSize; ++y) {
+      for (let z = 0; z < cellSize; ++z) {
+        for (let x = 0; x < cellSize; ++x) {
+          setVoxel(x, y, z, 1);
+        }
+      }
+    }
+  };
+
+  return {
+    newChunk,
+    generateGeometryDataForCell,
+  };
+};
+
+const faces = [
   {
     // left
     dir: [-1, 0, 0],
@@ -164,5 +166,3 @@ VoxelWorld.faces = [
     ],
   },
 ];
-
-export default VoxelWorld;
