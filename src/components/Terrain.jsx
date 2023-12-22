@@ -2,50 +2,23 @@ import { useBox } from "@react-three/cannon";
 import * as THREE from "three";
 import * as textures from "../images/textures";
 import { useVoxel } from "../hooks/useVoxel";
+import VoxelWorld from "../hooks/useVoxel";
 
-const VoxelCube = ({ position = [0, 0, 0] }) => {
+const VoxelCube = ({ position = [0, 0, 0], deletedSides = [] }) => {
   const [ref] = useBox(() => ({
     type: "Static",
     position, // [y, z, x]
-    geometry,
   }));
 
-  // prettier-ignore
-  const vertices = new Float32Array([
-  -1, -1, -1, // 0
-   1, -1, -1, // 1
-   1,  1, -1, // 2
-  -1,  1, -1, // 3
-  -1, -1,  1, // 4
-   1, -1,  1, // 5
-   1,  1,  1, // 6
-  -1,  1,  1, // 7
-]);
-  // prettier-ignore
-  const faces = new THREE.BufferAttribute(
-  new Uint16Array([
-    0, 1, 2, // Cara trasera
-    0, 2, 3, // Cara trasera
-    4, 5, 6, // Cara delantera
-    4, 6, 7, // Cara delantera
-   
-    0, 3, 4, // Inferior
-    3, 7, 4, // Inferior
-    0, 1, 2, // Superior
-    0, 2, 3, // Superior
-  ]),
-  1
-);
-
   const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
-  geometry.setIndex(faces);
 
-  const activeTexture = textures["glass" + "Texture"];
+  const vertices = new Float32Array(24); // 8 vértices * 3 coordenadas por vértice
+  const vertexIndexMap = {};
+
+  geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
 
   return (
-    <mesh ref={ref}>
-      <boxGeometry attach="geometry" />
+    <mesh ref={ref} geometry={geometry}>
       <meshPhongMaterial color={"red"} wireframe />
     </mesh>
   );
@@ -53,11 +26,45 @@ const VoxelCube = ({ position = [0, 0, 0] }) => {
 
 export const Terrain = ({ id, position, texture }) => {
   const cubesMatrix = useVoxel(1); // 2x2 matriz de cubos
+  const cellSize = 32;
+
+  const world = new VoxelWorld(cellSize);
+
+  for (let y = 0; y < cellSize; ++y) {
+    for (let z = 0; z < cellSize; ++z) {
+      for (let x = 0; x < cellSize; ++x) {
+        world.setVoxel(x, y, z, 1);
+      }
+    }
+  }
+
+  const { positions, normals, indices } = world.generateGeometryDataForCell(
+    0,
+    0,
+    0
+  );
+  const geometry = new THREE.BufferGeometry();
+  const material = new THREE.MeshLambertMaterial({ color: "green" });
+
+  const positionNumComponents = 3;
+  const normalNumComponents = 3;
+
+  geometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(
+      new Float32Array(positions),
+      positionNumComponents
+    )
+  );
+  geometry.setAttribute(
+    "normal",
+    new THREE.BufferAttribute(new Float32Array(normals), normalNumComponents)
+  );
+  geometry.setIndex(indices);
+
   return (
-    <>
-      {cubesMatrix.map((cubePosition, index) => (
-        <VoxelCube key={index} position={cubePosition} />
-      ))}
-    </>
+    <mesh geometry={geometry}>
+      <meshPhongMaterial color={"red"} wireframe />
+    </mesh>
   );
 };
