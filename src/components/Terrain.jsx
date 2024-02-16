@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { useChunk } from "../hooks/useChunk";
+import { Cube } from "./blocks/Cube";
 
 const { newChunk, generateGeometryDataForCell } = useChunk();
 newChunk();
@@ -24,9 +25,9 @@ export const Terrain = ({ id }) => {
   );
   geometry.setIndex(indices);
 
-  return (
-    <mesh geometry={geometry}>
-      <meshPhongMaterial color={"green"} wireframe />
-    </mesh>
-  );
+  return <Cube geometry={geometry} />;
 };
+
+/* <mesh geometry={geometry}>
+      <meshPhongMaterial color={"green"} wireframe  />  
+    </mesh> */

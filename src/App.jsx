@@ -17,7 +17,6 @@ function App() {
         <FPV />
         <Physics>
           <Terrain />
-
           <Ground />
           <Player />
         </Physics>
